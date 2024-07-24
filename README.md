@@ -8,6 +8,8 @@ Clear Target supports multithreading, supports http \ socks4 \ socks5 \ proxyles
 ### What I need:
 I need you to help me look at the code. My coding skills are not good, and I feel that there are many areas in my program that can be optimized. I need your guidance. I am a beginner, please take the time to teach me how to optimize my program. The contact information is below. Thank you very much!
 
+### Use environment:
+https://dotnet.microsoft.com/en-us/download/dotnet/8.0
 
 ### Donation  
 BTC: bc1pw2x4ys445n2u26r34khqcpwhzjj5jd3xzz2t5g0ntr70y6g5g8zs9x0qr7  
