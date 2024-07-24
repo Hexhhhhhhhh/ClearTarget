@@ -5,7 +5,8 @@ Currently, only the Parser function is available. Parser only contains one engin
 Need to go https://programmablesearchengine.google.com/controlpanel/all To obtain CES APIs Key, you can try obtaining the Key multiple times to achieve the required amount per day. This program supports reading multiple APIs.  
 Clear Target supports multithreading, supports http \ socks4 \ socks5 \ proxyless proxy mode (supports IP: POST: User: PASSWORD), supports multiple proxy APIs for reading, and supports logs and CUI mode output.
 
-
+### What I need:
+I need you to help me look at the code. My coding skills are not good, and I feel that there are many areas in my program that can be optimized. I need your guidance. I am a beginner, please take the time to teach me how to optimize my program. The contact information is below. Thank you very much!
 
 
 ### Donation  
