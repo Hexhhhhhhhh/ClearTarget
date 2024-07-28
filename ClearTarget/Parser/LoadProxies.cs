@@ -29,7 +29,11 @@ namespace ClearTarget.Parser
                 {
                     if (line.Contains(':'))
                     {
-                        Microsoft_Proxies.Add(line);
+                        string[] l = line.Split(':');
+                        if (l.Length == 2)
+                        {
+                            Microsoft_Proxies.Add(line);
+                        }
                     }
                 }
                 ParserStart.Proxies = new List<string>(Microsoft_Proxies);
