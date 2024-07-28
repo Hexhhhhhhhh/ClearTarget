@@ -57,6 +57,7 @@ namespace ClearTarget.Parser
         private static Timer _timer1;
         private static int _startY = 4;
         private static Stopwatch stopwatch = new Stopwatch();
+        private static bool _isRunning = false;
         private static void TimedEvent(Object o)
         {
             FUPM = (Filtered - _FilteredUrls) * 60;
@@ -71,15 +72,47 @@ namespace ClearTarget.Parser
             RPM = (Requests - _Requests) * 60;
             _Requests = Requests;
         }
-        private static void TimedEvent1(object o)
-        {
-            UpdateCUI();
-        }
+
         public static void UpdateCUI()
         {
-            Console.Clear();
-            MainEntrance.Logo();
-            Console.WriteLine("Engine:" + Engine);
+            var l = Markup.Escape("[");
+            var r = Markup.Escape("]");
+            var t = new Markup("");
+            
+            Thread thread = new Thread(() =>
+            {
+
+                AnsiConsole.Live(t)
+.Start(ctx =>
+{
+    while (_isRunning)
+    {
+        var text2 = $"""
+                Filtered Urls{l}[green bold]{Filtered}[/]{r}              FUPM{l}[lightgreen bold]{FUPM}[/]{r}
+                Total Urls   {l}[cyan bold]{TotalUrls}[/]{r}               UPM{l}[cyan2 bold]{UPM}[/]{r}
+                Parsed Dorks {l}[blue bold]{Process}[/]{r}               DPM{l}[turquoise2 bold]{DPM}[/]{r}
+                Requests     {l}[purple3 bold]{Requests}[/]{r}               RPM{l}[blueviolet bold]{RPM}[/]{r}
+                Errors       {l}[red1 bold]{Errors}[/]{r}
+                
+                Threads{l}[slateblue1 bold]{Threads}[/]{r}                   Timeout{l}[slateblue1 bold]{Timeout}[/]{r}
+                Pages{l}[slateblue1 bold]{Page}[/]{r}   
+                """;
+        ctx.UpdateTarget(new Markup(text2));
+        Thread.Sleep(1500);
+    }
+
+});
+
+            });
+            thread.Start();
+
+
+
+
+
+
+
+            /*
             var table = new Table();
             table.AddColumn("Overview");
             table.AddColumn("Value");
@@ -88,8 +121,8 @@ namespace ClearTarget.Parser
             table.AddRow("Filtered Urls", Filtered.ToString(), "FUPM", FUPM.ToString());
             table.AddRow("Total Urls", TotalUrls.ToString(), "UPM", UPM.ToString());
             table.AddRow("Parsed Dorks", Process.ToString(), "DPM", DPM.ToString());
-            table.AddRow("Requests", Requests.ToString(),"RPM", RPM.ToString());
-            table.AddRow("Errors", Errors.ToString(),"\\","\\");
+            table.AddRow("Requests", Requests.ToString(), "RPM", RPM.ToString());
+            table.AddRow("Errors", Errors.ToString(), "\\", "\\");
             var table1 = new Table();
             table1.AddColumn("Setting");
             table1.AddColumn("Value");
@@ -99,6 +132,7 @@ namespace ClearTarget.Parser
             AnsiConsole.Write(table);
             Console.WriteLine();
             AnsiConsole.Write(table1);
+            */
 
         }
         private static void UpdateTitle()
@@ -113,6 +147,7 @@ namespace ClearTarget.Parser
         }
         public static async Task Initialization()
         {
+            _isRunning = true;
             ReadParserConfig.Read();
             ChoiceEngine();
             await LoadDorks.ReadDorks();
@@ -126,10 +161,11 @@ namespace ClearTarget.Parser
             }
             Console.Clear();
             MainEntrance.Logo();
+            Console.WriteLine("Engine:" + Engine);
             _timer = new Timer(TimedEvent, null, 0, 1000);
             if (EnableCUI)
             {
-                _timer1 = new Timer(TimedEvent1, null, 0, 6500);
+               UpdateCUI();
             }
             DateTime now = DateTime.Now;
             fileTime = now.ToString("yyyy-MM-dd_HH-mm-ss");
@@ -138,9 +174,9 @@ namespace ClearTarget.Parser
                 MinWorkerThreads = Threads,
                 MaxWorkerThreads = Threads + 100
             });
-
             stopwatch.Start();
             n = Dorks.Count();
+
             var tasks = new List<IWorkItemResult<Task>>();
             for (int i = 0; i < Threads; i++)
             {
@@ -161,6 +197,7 @@ namespace ClearTarget.Parser
             stopwatch.Stop();
             smartThreadPool.WaitForIdle();
             smartThreadPool.Shutdown();
+            _isRunning = false;
             await Console.Out.WriteLineAsync("Parser Work Completion!");
             Thread.Sleep(10000);
             MainEntrance.MainShow();
@@ -361,7 +398,7 @@ namespace ClearTarget.Parser
             int parsedPages = 0;
             int resultsPerPage = 10;
             using var client = BuildClient();
-            for (int i = 0;i<googleMaxPages;i++)
+            for (int i = 0; i < googleMaxPages; i++)
             {
                 try
                 {
@@ -450,7 +487,7 @@ namespace ClearTarget.Parser
                             if (urls > 0)
                             {
                                 Console.ForegroundColor = ConsoleColor.Green;
-                                await Console.Out.WriteLineAsync("[Parsed]" + dork.Substring(1,20) + "..    Url(s)[" + urls + "]  Page[" + parsedPages + "]");
+                                await Console.Out.WriteLineAsync("[Parsed]" + dork.Substring(1, 20) + "..    Url(s)[" + urls + "]  Page[" + parsedPages + "]");
                                 Console.ResetColor();
                             }
                             else
